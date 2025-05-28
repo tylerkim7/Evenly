@@ -8,3 +8,5 @@ _Prereqs include having node installed and either XCode or Android Studio_
 2. CD into `frontend/evenly`
 3. Run `npm install`
 4. Run `npx expo` to get it up and running
+
+**Before starting development it's advised to run** `npm run reset-project` ***I just left the starter code as is for learning purposes.**
