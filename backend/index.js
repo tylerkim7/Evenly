@@ -12,7 +12,12 @@ try {
     console.log('Image Received:')
     res.json({
       success: true,
-      message: 'Image processed successfully'
+      message: 'Image processed successfully',
+      imageInfo: {
+        size: req.file.size,
+        type: req.file.mimetype,
+        originalName: req.file.originalname
+      }
     });
 } catch (error) {
     console.error('Error:', error);
