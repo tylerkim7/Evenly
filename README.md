@@ -18,3 +18,5 @@ _Prereqs include having node installed and either XCode or Android Studio for th
 2. CD into `backend/`
 3. Run `npm install`
 4. Run `npm run dev` to start the server
+
+**Server will be running on `localhost:3000`, you can interact with it through any API service like Postman.**
