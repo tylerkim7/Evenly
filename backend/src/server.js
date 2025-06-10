@@ -8,7 +8,7 @@ const upload = multer({
     storage: multer.memoryStorage()
 });
 
-app.post ('/receipt', upload.single('receiptImg'), async(req, res) => {
+app.post ('/upload', upload.single('receipt'), async(req, res) => {
 try {
     res.json({
       success: true,
