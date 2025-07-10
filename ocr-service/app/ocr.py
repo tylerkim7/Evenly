@@ -1,7 +1,12 @@
-def dummy_process(filename: str):
+import io
+import numpy as np
+import pytesseract
+from PIL import Image
+
+def dummy_process():
     return {
         'status': 'success',
-        'message': f'Received file: {filename}',
+        'message': f'Dummy response',
         'items': [
             {'name': 'Item 1', 'price': 10.0, 'quantity': 2},
             {'name': 'Item 2', 'price': 20.0, 'quantity': 1},
@@ -11,3 +16,15 @@ def dummy_process(filename: str):
             {'total': 49.5}
         ]
     }
+
+
+def ocr_process(filename: str, data: bytes):
+    img = Image.open(io.BytesIO(data))
+    out = pytesseract.image_to_string(img)
+
+    return {
+        'status': 'success',
+        'message': f'Processed file: {filename}',
+        'data': out
+    }
+    
