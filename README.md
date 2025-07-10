@@ -20,3 +20,22 @@ _Prereqs include having node installed and either XCode or Android Studio for th
 4. Run `npm run dev` to start the server
 
 **Server will be running on `localhost:3000`, you can interact with it through any API service like Postman.**
+
+---
+
+## OCR Microservice
+
+#### Build:
+In `ocr-service` run:
+
+```bash
+docker build -t ocr-service .
+```
+
+#### Run:
+
+In `ocr-service` run:
+
+```bash
+docker run -p 8080:8080 ocr-service
+```
