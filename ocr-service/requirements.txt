@@ -1,0 +1,4 @@
+opencv-python
+fastapi[standard]
+pytesseract
+Pillow
