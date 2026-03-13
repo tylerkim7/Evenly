@@ -1,5 +1,10 @@
 import { Stack } from "expo-router";
+import { BillProvider } from "../contexts/BillContext";
 
 export default function RootLayout() {
-  return <Stack />;
+  return (
+    <BillProvider>
+      <Stack />
+    </BillProvider>
+  );
 }
