@@ -4,7 +4,7 @@ import { BillProvider } from "../contexts/BillContext";
 export default function RootLayout() {
   return (
     <BillProvider>
-      <Stack />
+    <Stack screenOptions={{ headerShown: false }} />
     </BillProvider>
   );
 }
