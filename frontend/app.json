@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Evenly",
+    "slug": "evenly",
+    "scheme": "evenly",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.evenly.app"
+    },
+    "android": {
+      "package": "com.evenly.app"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Evenly needs access to your photos to select a receipt image.",
+          "cameraPermission": "Evenly needs access to your camera to photograph a receipt."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
