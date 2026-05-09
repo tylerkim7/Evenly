@@ -2,17 +2,19 @@ import { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import * as ImagePicker from 'expo-image-picker';
 import { useRouter } from 'expo-router';
 import { useBill } from '../context/BillContext';
 import { parseReceiptItems } from '../utils/parseReceipt';
-
-const OCR_URL = 'http://192.168.68.52:8000/ocr';
+import { OCR_URL } from '../config';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -68,77 +70,78 @@ export default function HomeScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.logo}>Evenly</Text>
-      <Text style={styles.subtitle}>Split any receipt, fairly.</Text>
+    <LinearGradient colors={['#2d1b69', '#11052c', '#0a0118']} style={styles.gradient}>
+      <SafeAreaView style={styles.safe}>
+        <View style={styles.center}>
+          <Text style={styles.logo}>Evenly</Text>
+          <Text style={styles.subtitle}>Split any receipt, fairly.</Text>
+        </View>
 
-      {loading ? (
-        <View style={styles.loadingBox}>
-          <ActivityIndicator size="large" color="#4F46E5" />
-          <Text style={styles.loadingText}>Reading receipt…</Text>
-        </View>
-      ) : (
-        <View style={styles.buttons}>
-          <TouchableOpacity style={styles.btn} onPress={() => pickAndUpload(true)}>
-            <Text style={styles.btnText}>Take Photo</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.btn, styles.btnSecondary]} onPress={() => pickAndUpload(false)}>
-            <Text style={[styles.btnText, styles.btnTextSecondary]}>Choose from Library</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </View>
+        {loading ? (
+          <View style={styles.loadingBox}>
+            <ActivityIndicator size="large" color="#c084fc" />
+            <Text style={styles.loadingText}>Reading receipt…</Text>
+          </View>
+        ) : (
+          <View style={styles.buttons}>
+            <TouchableOpacity activeOpacity={0.85} onPress={() => pickAndUpload(true)}>
+              <LinearGradient
+                colors={['#9333ea', '#6d28d9']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.primaryBtn}
+              >
+                <Text style={styles.primaryBtnText}>Take Photo</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+
+            <TouchableOpacity activeOpacity={0.85} onPress={() => pickAndUpload(false)}>
+              <BlurView intensity={25} tint="light" style={styles.glassBtn}>
+                <Text style={styles.glassBtnText}>Choose from Library</Text>
+              </BlurView>
+            </TouchableOpacity>
+          </View>
+        )}
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F9FAFB',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
-  },
+  gradient: { flex: 1 },
+  safe: { flex: 1, justifyContent: 'space-between', paddingHorizontal: 28, paddingBottom: 48 },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 10 },
   logo: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    color: '#4F46E5',
-    marginBottom: 8,
+    fontSize: 60,
+    fontWeight: '800',
+    color: '#ffffff',
+    letterSpacing: -2,
+    textShadowColor: 'rgba(192, 132, 252, 0.9)',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 24,
   },
   subtitle: {
-    fontSize: 18,
-    color: '#6B7280',
-    marginBottom: 48,
-  },
-  buttons: {
-    width: '100%',
-    gap: 16,
-  },
-  btn: {
-    backgroundColor: '#4F46E5',
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  btnSecondary: {
-    backgroundColor: '#fff',
-    borderWidth: 2,
-    borderColor: '#4F46E5',
-  },
-  btnText: {
-    color: '#fff',
     fontSize: 17,
-    fontWeight: '600',
+    color: 'rgba(255, 255, 255, 0.55)',
+    fontWeight: '400',
+    letterSpacing: 0.2,
   },
-  btnTextSecondary: {
-    color: '#4F46E5',
-  },
-  loadingBox: {
+  loadingBox: { alignItems: 'center', gap: 14, paddingBottom: 12 },
+  loadingText: { fontSize: 15, color: 'rgba(255,255,255,0.6)' },
+  buttons: { gap: 14 },
+  primaryBtn: {
+    borderRadius: 18,
+    paddingVertical: 18,
     alignItems: 'center',
-    gap: 16,
   },
-  loadingText: {
-    fontSize: 16,
-    color: '#6B7280',
+  primaryBtnText: { color: '#fff', fontSize: 17, fontWeight: '700', letterSpacing: 0.3 },
+  glassBtn: {
+    borderRadius: 18,
+    paddingVertical: 18,
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
+  glassBtnText: { color: 'rgba(255,255,255,0.9)', fontSize: 17, fontWeight: '600', letterSpacing: 0.3 },
 });

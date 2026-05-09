@@ -154,3 +154,6 @@ dist/
 # Expo
 .expo/
 frontend/.expo/
+
+# Local config (contains LAN IP)
+frontend/config.ts

@@ -6,12 +6,13 @@ export default function RootLayout() {
     <BillProvider>
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: '#4F46E5' },
+          headerStyle: { backgroundColor: '#1a0b38' },
           headerTintColor: '#fff',
-          headerTitleStyle: { fontWeight: 'bold' },
+          headerTitleStyle: { fontWeight: '700', color: '#fff' },
+          headerShadowVisible: false,
         }}
       >
-        <Stack.Screen name="index" options={{ title: 'Evenly' }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="review" options={{ title: 'Review Items' }} />
         <Stack.Screen name="people" options={{ title: 'Add People & Assign' }} />
         <Stack.Screen name="summary" options={{ title: 'Summary' }} />

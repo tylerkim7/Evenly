@@ -11,6 +11,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import { useBill } from '../context/BillContext';
 import PersonCard from '../components/PersonCard';
@@ -52,96 +54,154 @@ export default function PeopleScreen() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <View style={styles.addRow}>
-        <TextInput
-          style={styles.input}
-          placeholder="Person's name"
-          value={nameInput}
-          onChangeText={setNameInput}
-          onSubmitEditing={addPerson}
-          returnKeyType="done"
-        />
-        <TouchableOpacity style={styles.addBtn} onPress={addPerson}>
-          <Text style={styles.addBtnText}>Add</Text>
-        </TouchableOpacity>
-      </View>
+    <LinearGradient colors={['#1a0b38', '#11052c', '#0a0118']} style={styles.gradient}>
+      <KeyboardAvoidingView style={styles.inner} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <BlurView intensity={25} tint="dark" style={styles.addRow}>
+          <TextInput
+            style={styles.input}
+            placeholder="Person's name"
+            placeholderTextColor="rgba(255,255,255,0.35)"
+            value={nameInput}
+            onChangeText={setNameInput}
+            onSubmitEditing={addPerson}
+            returnKeyType="done"
+          />
+          <TouchableOpacity style={styles.addBtn} onPress={addPerson}>
+            <Text style={styles.addBtnText}>Add</Text>
+          </TouchableOpacity>
+        </BlurView>
 
-      <ScrollView contentContainerStyle={styles.scroll}>
-        {state.items.map((item) => (
-          <View key={item.id} style={styles.itemBlock}>
-            <View style={styles.itemHeader}>
-              <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
-              <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+        <ScrollView contentContainerStyle={styles.scroll}>
+          {state.items.map((item) => (
+            <View key={item.id} style={styles.itemBlock}>
+              <View style={styles.itemHeader}>
+                <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
+                <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+              </View>
+              <View style={styles.chips}>
+                {state.people.length === 0 ? (
+                  <Text style={styles.dimText}>Add people above to assign items.</Text>
+                ) : (
+                  state.people.map((person) => {
+                    const assigned = item.assignedTo.includes(person);
+                    return (
+                      <TouchableOpacity
+                        key={person}
+                        style={[styles.chip, assigned && styles.chipActive]}
+                        onPress={() => dispatch({ type: 'TOGGLE_ASSIGN', payload: { itemId: item.id, person } })}
+                      >
+                        <Text style={[styles.chipText, assigned && styles.chipTextActive]}>
+                          {person}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })
+                )}
+              </View>
             </View>
-            <View style={styles.people}>
-              {state.people.length === 0 ? (
-                <Text style={styles.noPeople}>Add people above to assign items.</Text>
-              ) : (
-                state.people.map((person) => {
-                  const assigned = item.assignedTo.includes(person);
-                  return (
-                    <TouchableOpacity
-                      key={person}
-                      style={[styles.chip, assigned && styles.chipActive]}
-                      onPress={() => dispatch({ type: 'TOGGLE_ASSIGN', payload: { itemId: item.id, person } })}
-                    >
-                      <Text style={[styles.chipText, assigned && styles.chipTextActive]}>
-                        {person}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })
-              )}
-            </View>
-          </View>
-        ))}
-      </ScrollView>
+          ))}
+        </ScrollView>
 
-      <View style={styles.footer}>
-        <FlatList
-          horizontal
-          data={state.people}
-          keyExtractor={(p) => p}
-          renderItem={({ item: person }) => (
-            <PersonCard
-              name={person}
-              onRemove={() => dispatch({ type: 'REMOVE_PERSON', payload: person })}
-            />
-          )}
-          contentContainerStyle={styles.personList}
-          ListEmptyComponent={<Text style={styles.noPeople}>No people added yet.</Text>}
-        />
-        <TouchableOpacity style={styles.btn} onPress={handleContinue}>
-          <Text style={styles.btnText}>See Summary →</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
+        <BlurView intensity={40} tint="dark" style={styles.footer}>
+          <FlatList
+            horizontal
+            data={state.people}
+            keyExtractor={(p) => p}
+            renderItem={({ item: person }) => (
+              <PersonCard
+                name={person}
+                onRemove={() => dispatch({ type: 'REMOVE_PERSON', payload: person })}
+              />
+            )}
+            contentContainerStyle={styles.personList}
+            ListEmptyComponent={<Text style={styles.dimText}>No people added yet.</Text>}
+          />
+          <TouchableOpacity activeOpacity={0.85} onPress={handleContinue}>
+            <LinearGradient
+              colors={['#9333ea', '#6d28d9']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.btn}
+            >
+              <Text style={styles.btnText}>See Summary</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </BlurView>
+      </KeyboardAvoidingView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F9FAFB' },
-  addRow: { flexDirection: 'row', padding: 16, gap: 8, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#E5E7EB' },
-  input: { flex: 1, borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, fontSize: 15 },
-  addBtn: { backgroundColor: '#4F46E5', paddingHorizontal: 18, borderRadius: 10, justifyContent: 'center' },
-  addBtnText: { color: '#fff', fontWeight: '600', fontSize: 15 },
+  gradient: { flex: 1 },
+  inner: { flex: 1 },
+  addRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    gap: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.1)',
+    overflow: 'hidden',
+  },
+  input: {
+    flex: 1,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.15)',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    fontSize: 15,
+    color: '#fff',
+  },
+  addBtn: {
+    backgroundColor: 'rgba(147, 51, 234, 0.8)',
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(192, 132, 252, 0.3)',
+  },
+  addBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
   scroll: { padding: 16, gap: 12, paddingBottom: 8 },
-  itemBlock: { backgroundColor: '#fff', borderRadius: 12, padding: 14, gap: 10, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 4, elevation: 2 },
+  itemBlock: {
+    backgroundColor: 'rgba(255,255,255,0.07)',
+    borderRadius: 18,
+    padding: 14,
+    gap: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.12)',
+  },
   itemHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  itemName: { fontSize: 15, fontWeight: '600', color: '#111827', flex: 1, marginRight: 8 },
-  itemPrice: { fontSize: 15, fontWeight: '700', color: '#4F46E5' },
-  people: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { paddingVertical: 6, paddingHorizontal: 14, borderRadius: 20, borderWidth: 1.5, borderColor: '#D1D5DB', backgroundColor: '#F9FAFB' },
-  chipActive: { backgroundColor: '#4F46E5', borderColor: '#4F46E5' },
-  chipText: { fontSize: 13, color: '#6B7280', fontWeight: '500' },
-  chipTextActive: { color: '#fff' },
-  noPeople: { fontSize: 13, color: '#9CA3AF' },
-  footer: { borderTopWidth: 1, borderTopColor: '#E5E7EB', backgroundColor: '#fff', paddingTop: 12, gap: 12, paddingBottom: 16, paddingHorizontal: 16 },
+  itemName: { fontSize: 15, fontWeight: '600', color: '#fff', flex: 1, marginRight: 8 },
+  itemPrice: { fontSize: 15, fontWeight: '700', color: '#c084fc' },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chip: {
+    paddingVertical: 7,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: 'rgba(255,255,255,0.07)',
+  },
+  chipActive: {
+    backgroundColor: 'rgba(147, 51, 234, 0.7)',
+    borderColor: 'rgba(192, 132, 252, 0.5)',
+  },
+  chipText: { fontSize: 13, color: 'rgba(255,255,255,0.65)', fontWeight: '500' },
+  chipTextActive: { color: '#fff', fontWeight: '600' },
+  dimText: { fontSize: 13, color: 'rgba(255,255,255,0.35)' },
+  footer: {
+    overflow: 'hidden',
+    paddingHorizontal: 20,
+    paddingTop: 14,
+    paddingBottom: 32,
+    gap: 12,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.1)',
+  },
   personList: { gap: 8, paddingBottom: 4 },
-  btn: { backgroundColor: '#4F46E5', paddingVertical: 14, borderRadius: 12, alignItems: 'center' },
-  btnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  btn: { borderRadius: 16, paddingVertical: 16, alignItems: 'center' },
+  btnText: { color: '#fff', fontSize: 16, fontWeight: '700', letterSpacing: 0.3 },
 });
